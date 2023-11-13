@@ -3,24 +3,31 @@
 #include <stdbool.h>
 #include <string.h>
 
-#define MAX 1000
+#define MAX_STATES 1000
+#define MAX_ALPHABET 100
 
-int numberOfStates, numOfAlpha, countOfTransition[MAX][MAX], pathLength = 0;
-char states[MAX], alphabet[MAX], transition[MAX][MAX][MAX], str[MAX], start, final, path[MAX], current_state;
+int numStates, numAlphabet, transitionCount[MAX_STATES][MAX_ALPHABET], pathLength = 0;
+char states[MAX_STATES], alphabet[MAX_ALPHABET], transitions[MAX_STATES][MAX_ALPHABET][MAX_STATES], inputString[MAX_STATES], startState, finalState, path[MAX_STATES], currentState;
 
-bool traverse(int ptr, char curr) {
+bool traverse(int ptr, char curr)
+{
     bool result = false;
 
-    if (ptr == strlen(str)) {
-        return curr == final;
+    if (ptr == strlen(inputString))
+    {
+        return curr == finalState;
     }
 
-    for (int j = 0; j < numOfAlpha; j++) {
-        if (str[ptr] == alphabet[j]) {
-            for (int k = 0; k < countOfTransition[abs(curr - states[0])][j]; k++) {
-                char nextState = transition[abs(curr - states[0])][j][k];
+    for (int j = 0; j < numAlphabet; j++)
+    {
+        if (inputString[ptr] == alphabet[j])
+        {
+            for (int k = 0; k < transitionCount[abs(curr - states[0])][j]; k++)
+            {
+                char nextState = transitions[abs(curr - states[0])][j][k];
                 result = result || traverse(ptr + 1, nextState);
-                if (result == true) {
+                if (result == true)
+                {
                     path[pathLength++] = nextState;
                 }
             }
@@ -29,53 +36,63 @@ bool traverse(int ptr, char curr) {
     return result;
 }
 
-int main() {
+int main()
+{
     printf("Enter number of states: ");
-    scanf("%d", &numberOfStates);
+    scanf("%d", &numStates);
     printf("Enter states:\n");
-    for (int i = 0; i < numberOfStates; i++) {
+    for (int i = 0; i < numStates; i++)
+    {
         scanf(" %c", &states[i]);
     }
 
     printf("Enter number of alphabet: ");
-    scanf("%d", &numOfAlpha);
+    scanf("%d", &numAlphabet);
     printf("Enter alphabets:\n");
-    for (int i = 0; i < numOfAlpha; i++) {
+    for (int i = 0; i < numAlphabet; i++)
+    {
         scanf(" %c", &alphabet[i]);
     }
 
-    for (int i = 0; i < numberOfStates; i++) {
-        for (int j = 0; j < numOfAlpha; j++) {
+    for (int i = 0; i < numStates; i++)
+    {
+        for (int j = 0; j < numAlphabet; j++)
+        {
             printf("From State: %c via \"%c\" to State:\n", states[i], alphabet[j]);
             printf("How many transitions: ");
-            scanf("%d", &countOfTransition[i][j]);
-            for (int k = 0; k < countOfTransition[i][j]; k++) {
-                scanf(" %c", &transition[i][j][k]);
+            scanf("%d", &transitionCount[i][j]);
+            for (int k = 0; k < transitionCount[i][j]; k++)
+            {
+                scanf(" %c", &transitions[i][j][k]);
             }
         }
     }
 
     printf("Enter string: ");
-    scanf("%s", str);
+    scanf("%s", inputString);
 
     printf("Enter starting state:");
-    scanf(" %c", &start);
+    scanf(" %c", &startState);
 
     printf("Enter final state: ");
-    scanf(" %c", &final);
+    scanf(" %c", &finalState);
 
-    current_state = start;
-    printf("path: ");
-    if (traverse(0, start)) {
+    currentState = startState;
+    printf("Path: ");
+    if (traverse(0, startState))
+    {
         printf("Accepted\n");
-    } else {
+    }
+    else
+    {
         printf("Rejected\n");
     }
 
-    path[pathLength++] = start;
+    path[pathLength++] = startState;
     int n = pathLength;
-    printf("path: ");
-    for (int i = n - 1; i >= 0; i--) {
+    printf("Path: ");
+    for (int i = n - 1; i >= 0; i--)
+    {
         printf("%c -> ", path[i]);
     }
     printf("\n\n");
